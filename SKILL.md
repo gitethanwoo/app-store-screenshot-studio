@@ -21,13 +21,12 @@ This skill requires two other tools. Before proceeding, verify they are availabl
 ### 1. Nano Banana Pro (image generation)
 - **What it does:** Generates marketing composite images from raw screenshots using Google Gemini 3 Pro Image
 - **Check:** Look for the `nano-banana-pro` skill or `/nano-banana-pro` command
-- **Install if missing:** Pick one community option:
+- **Source:** https://github.com/steipete/agent-scripts/tree/main/skills/nano-banana-pro
+- **Install if missing:**
   ```bash
-  # Option A: feedtailor's skill
-  git clone https://github.com/feedtailor/ccskill-nanobanana ~/.claude/skills/nano-banana-pro
-
-  # Option B: devonjones's skill
-  git clone https://github.com/devonjones/skill-nano-banana ~/.claude/skills/nano-banana-pro
+  git clone --depth 1 https://github.com/steipete/agent-scripts /tmp/agent-scripts && \
+    cp -r /tmp/agent-scripts/skills/nano-banana-pro ~/.claude/skills/ && \
+    rm -rf /tmp/agent-scripts
   ```
 - **Requires:** `GEMINI_API_KEY` environment variable
 
