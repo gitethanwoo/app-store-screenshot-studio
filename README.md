@@ -16,21 +16,34 @@ This skill orchestrates:
 This skill depends on two other tools:
 
 ### 1. Nano Banana Pro (image generation)
-Generates marketing composites from raw screenshots.
+Generates marketing composites from raw screenshots using Google Gemini 3 Pro Image.
+
+Pick one of these community options:
 ```bash
-git clone https://github.com/gitethanwoo/nano-banana-pro ~/.claude/skills/nano-banana-pro
+# Option A: feedtailor's skill
+git clone https://github.com/feedtailor/ccskill-nanobanana ~/.claude/skills/nano-banana-pro
+
+# Option B: devonjones's skill
+git clone https://github.com/devonjones/skill-nano-banana ~/.claude/skills/nano-banana-pro
 ```
 
-### 2. Xcode Build MCP (simulator control)
-Builds apps, boots simulators, captures screenshots.
+Requires `GEMINI_API_KEY` in your environment.
 
-Add to your Claude Code MCP config (`~/.claude.json` or `.mcp.json`):
+### 2. XcodeBuildMCP (simulator control)
+Builds apps, boots simulators, captures screenshots. See [cameroncooke/XcodeBuildMCP](https://github.com/cameroncooke/XcodeBuildMCP).
+
+```bash
+# One-liner for Claude Code
+claude mcp add XcodeBuildMCP npx xcodebuildmcp@latest
+```
+
+Or add to your MCP config manually (`~/.claude.json` or `.mcp.json`):
 ```json
 {
   "mcpServers": {
-    "xcode-build": {
+    "XcodeBuildMCP": {
       "command": "npx",
-      "args": ["-y", "@anthropics/xcode-build-mcp"]
+      "args": ["-y", "xcodebuildmcp@latest"]
     }
   }
 }

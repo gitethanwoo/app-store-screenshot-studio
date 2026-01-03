@@ -19,28 +19,38 @@ Use this skill when the user asks for App Store screenshots, screenshot automati
 This skill requires two other tools. Before proceeding, verify they are available:
 
 ### 1. Nano Banana Pro (image generation)
-- **What it does:** Generates marketing composite images from raw screenshots
+- **What it does:** Generates marketing composite images from raw screenshots using Google Gemini 3 Pro Image
 - **Check:** Look for the `nano-banana-pro` skill or `/nano-banana-pro` command
-- **Install if missing:**
+- **Install if missing:** Pick one community option:
   ```bash
-  git clone https://github.com/gitethanwoo/nano-banana-pro ~/.claude/skills/nano-banana-pro
-  ```
+  # Option A: feedtailor's skill
+  git clone https://github.com/feedtailor/ccskill-nanobanana ~/.claude/skills/nano-banana-pro
 
-### 2. Xcode Build MCP (simulator control)
+  # Option B: devonjones's skill
+  git clone https://github.com/devonjones/skill-nano-banana ~/.claude/skills/nano-banana-pro
+  ```
+- **Requires:** `GEMINI_API_KEY` environment variable
+
+### 2. XcodeBuildMCP (simulator control)
 - **What it does:** Builds apps, boots simulators, captures screenshots via simctl
-- **Check:** Look for `xcode-build` or `xcode_build` in available MCP tools
+- **Check:** Look for `XcodeBuildMCP` tools (e.g., `xcodebuild_build`, `simulator_boot`)
 - **Install if missing:**
   ```bash
-  # Add to Claude Code MCP settings (~/.claude.json or project .mcp.json):
+  # One-liner for Claude Code
+  claude mcp add XcodeBuildMCP npx xcodebuildmcp@latest
+  ```
+  Or add to MCP config (`~/.claude.json` or `.mcp.json`):
+  ```json
   {
     "mcpServers": {
-      "xcode-build": {
+      "XcodeBuildMCP": {
         "command": "npx",
-        "args": ["-y", "@anthropics/xcode-build-mcp"]
+        "args": ["-y", "xcodebuildmcp@latest"]
       }
     }
   }
   ```
+- **Source:** https://github.com/cameroncooke/XcodeBuildMCP
 
 ### If dependencies are missing
 If either dependency is unavailable:
