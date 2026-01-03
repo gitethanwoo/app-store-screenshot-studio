@@ -3,6 +3,41 @@
 Use these templates when generating final marketing composites.
 Hard constraints: do not hallucinate UI, and output EXACT pixel dimensions.
 
+## How to invoke the generate_image.py script
+
+The nano-banana-pro skill includes `scripts/generate_image.py`. Invoke it via:
+
+```bash
+# Basic generation (new image from prompt)
+uv run ~/.claude/skills/nano-banana-pro/scripts/generate_image.py \
+  --prompt "Your prompt here" \
+  --filename "./screenshots/final/en-US/iphone_6_9/01_hero.png" \
+  --resolution 2K
+
+# Edit existing image (compositing raw screenshot)
+uv run ~/.claude/skills/nano-banana-pro/scripts/generate_image.py \
+  --prompt "Your prompt here" \
+  --input-image "./screenshots/raw/en-US/iphone_6_9/01_hero.png" \
+  --filename "./screenshots/final/en-US/iphone_6_9/01_hero.png" \
+  --resolution 2K
+```
+
+### Arguments
+| Flag | Description |
+|------|-------------|
+| `--prompt`, `-p` | Required. Text description for generation/editing |
+| `--filename`, `-f` | Required. Output file path |
+| `--resolution`, `-r` | Optional. `1K`, `2K`, or `4K` (default: 1K) |
+| `--input-image`, `-i` | Optional. Path to image to edit (for compositing) |
+| `--api-key`, `-k` | Optional. Gemini API key (or set `GEMINI_API_KEY` env var) |
+
+### Resolution mapping for App Store sizes
+| Device category | Recommended resolution |
+|-----------------|----------------------|
+| iphone_6_9 (1290x2796) | `2K` |
+| iphone_6_5 (1284x2778) | `2K` |
+| ipad_13 (2048x2732) | `2K` or `4K` |
+
 ## Global rules to include in every prompt
 - Output must be exactly {WIDTH}x{HEIGHT} pixels.
 - Use the provided raw screenshot as the only source of in-app UI.
