@@ -13,17 +13,25 @@ This skill orchestrates:
 
 ## Installation
 
-### As a personal skill (all projects)
+### One-liner (recommended)
 ```bash
-cp -r app-store-screenshot-studio ~/.claude/skills/
-```
-
-### As a project skill (this repo only)
-```bash
-cp -r app-store-screenshot-studio .claude/skills/
+git clone https://github.com/gitethanwoo/app-store-screenshot-studio ~/.claude/skills/app-store-screenshot-studio
 ```
 
 Then restart Claude Code.
+
+### Alternative: project-level skill
+If you want the skill scoped to a specific project:
+```bash
+git clone https://github.com/gitethanwoo/app-store-screenshot-studio .claude/skills/app-store-screenshot-studio
+```
+
+### For agents
+Clone to the user's Claude skills directory:
+```bash
+git clone https://github.com/gitethanwoo/app-store-screenshot-studio ~/.claude/skills/app-store-screenshot-studio
+```
+Restart Claude Code to load the skill.
 
 ## Usage
 
