@@ -14,6 +14,44 @@ You produce App Store Connect-ready screenshot sets by:
 
 Use this skill when the user asks for App Store screenshots, screenshot automation, App Store Connect-ready images, or "marketing screenshots for submission".
 
+## Dependencies (check before starting)
+
+This skill requires two other tools. Before proceeding, verify they are available:
+
+### 1. Nano Banana Pro (image generation)
+- **What it does:** Generates marketing composite images from raw screenshots
+- **Check:** Look for the `nano-banana-pro` skill or `/nano-banana-pro` command
+- **Install if missing:**
+  ```bash
+  git clone https://github.com/gitethanwoo/nano-banana-pro ~/.claude/skills/nano-banana-pro
+  ```
+
+### 2. Xcode Build MCP (simulator control)
+- **What it does:** Builds apps, boots simulators, captures screenshots via simctl
+- **Check:** Look for `xcode-build` or `xcode_build` in available MCP tools
+- **Install if missing:**
+  ```bash
+  # Add to Claude Code MCP settings (~/.claude.json or project .mcp.json):
+  {
+    "mcpServers": {
+      "xcode-build": {
+        "command": "npx",
+        "args": ["-y", "@anthropics/xcode-build-mcp"]
+      }
+    }
+  }
+  ```
+
+### If dependencies are missing
+If either dependency is unavailable:
+1. **STOP** and inform the user which dependency is missing
+2. **Provide the install command** from above
+3. **Offer alternatives:**
+   - Without Xcode Build MCP: User can provide raw screenshots manually, then you composite them
+   - Without Nano Banana Pro: You can create the screenshot brief and capture raws, but user needs another tool for compositing
+
+Do NOT attempt to proceed with the full workflow if dependencies are missing. Partial workflows are acceptable if clearly communicated.
+
 ## Non-negotiables (Apple compliance)
 Follow these guardrails every time:
 - Never misrepresent the app. Don't add UI, features, badges, or claims the app does not actually provide.

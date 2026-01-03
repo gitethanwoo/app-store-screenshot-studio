@@ -11,6 +11,33 @@ This skill orchestrates:
 - **Marketing compositing** via Nano Banana Pro
 - **Validation + packaging** so you're not uploading "almost right" assets
 
+## Prerequisites
+
+This skill depends on two other tools:
+
+### 1. Nano Banana Pro (image generation)
+Generates marketing composites from raw screenshots.
+```bash
+git clone https://github.com/gitethanwoo/nano-banana-pro ~/.claude/skills/nano-banana-pro
+```
+
+### 2. Xcode Build MCP (simulator control)
+Builds apps, boots simulators, captures screenshots.
+
+Add to your Claude Code MCP config (`~/.claude.json` or `.mcp.json`):
+```json
+{
+  "mcpServers": {
+    "xcode-build": {
+      "command": "npx",
+      "args": ["-y", "@anthropics/xcode-build-mcp"]
+    }
+  }
+}
+```
+
+> **Note:** The skill will check for these dependencies and guide users through installation if missing. Partial workflows are supported (e.g., user provides raw screenshots manually).
+
 ## Installation
 
 ### One-liner (recommended)
