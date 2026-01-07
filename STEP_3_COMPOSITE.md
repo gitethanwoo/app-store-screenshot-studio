@@ -38,6 +38,21 @@ uv run ~/.claude/skills/nano-banana-pro/scripts/generate_image.py \
 
 ---
 
+## Presentation Styles
+
+Choose a cohesive style for the set. Pick ONE and use it consistently across all screenshots:
+
+| Style | Description |
+|-------|-------------|
+| `flat` | Straight-on, device fills frame |
+| `tilted` | Slight angle, adds depth |
+| `floating` | 3D perspective, device floating with shadow |
+| `multi-screen` | Multiple devices/screens showing related features |
+
+Add the chosen style to your prompt, e.g.: `Present the device in a floating 3D perspective with subtle shadow.`
+
+---
+
 ## Prompt Templates
 
 ### Template A: Clean & Modern
@@ -45,8 +60,8 @@ uv run ~/.claude/skills/nano-banana-pro/scripts/generate_image.py \
 ```
 Create an App Store marketing screenshot.
 
-Place the provided screenshot prominently as the base layer.
-DO NOT alter or recreate the app UI.
+Use the provided screenshot as the base layer — DO NOT alter or recreate the app UI.
+Present the device {STYLE}.
 
 Background: Subtle gradient using {BRAND_COLORS}.
 
@@ -62,6 +77,7 @@ If the screen is empty, populate with realistic fictional content.
 Create an App Store marketing screenshot.
 
 Use the provided screenshot as the base — DO NOT recreate the app UI.
+Present the device {STYLE}.
 
 Add:
 - Headline: "{HEADLINE}"
@@ -70,18 +86,17 @@ Add:
 If the screen is empty, populate with realistic fictional content.
 ```
 
-### Template C: Trust / Privacy
+### Template C: Multi-Screen
 
 ```
-Create an App Store marketing screenshot.
+Create an App Store marketing screenshot showing multiple screens.
 
-Use the provided screenshot as the base — DO NOT recreate the app UI.
+Use the provided screenshot as the primary screen — DO NOT recreate the app UI.
+Add 1-2 additional screens showing related app states (can be variations).
 
 Headline: "{HEADLINE}"
-Subheadline: "{SUBHEADLINE}"
 
-If the screen is empty, populate with realistic fictional content.
-No prices, no competitor references.
+If screens are empty, populate with realistic fictional content.
 ```
 
 ---
