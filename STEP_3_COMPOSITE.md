@@ -103,11 +103,29 @@ No prices, no platform references, no unverifiable claims.
 
 ---
 
+## Handling Empty States
+
+If the raw screenshot shows an empty state (no data, blank lists, etc.), add this to your prompt:
+
+```
+If the app screen appears empty or has placeholder content, populate it with
+realistic fictional data that demonstrates the feature in use. Use fictional
+names, messages, and content — never real personal data.
+```
+
+This is acceptable because:
+- It's often impractical to seed perfect demo data in the simulator
+- The core UI structure from the screenshot is preserved
+- Only content/data is filled in, not new UI elements
+
+---
+
 ## Global Rules (Include in Every Prompt)
 
 - Output must be exactly {WIDTH}x{HEIGHT} pixels
-- Use the raw screenshot as the ONLY source of app UI
+- Use the raw screenshot as the ONLY source of app UI structure
 - Do NOT add UI elements not present in the screenshot
+- If the screen is empty, populate with realistic fictional content (see above)
 - Keep UI large and readable
 - Keep text inside safe margins (~5% from edges)
 - No prices or competitor references
