@@ -124,9 +124,37 @@ Hard requirements:
 If you need play-by-play guidance, see [PLAYBOOK_XCODE_MCP.md](PLAYBOOK_XCODE_MCP.md).
 
 ### Step 3 — Generate marketing composites via Nano Banana Pro
-For each frame in the brief:
-- Input: raw screenshot + copy + device target size + style guide
-- Output: `./screenshots/final/<locale>/<device_category>/<index>_<slug>.png`
+
+**⚠️ CRITICAL: You MUST pass the raw screenshot as `--input-image`. Do NOT generate from text prompts alone.**
+
+This is a two-phase process:
+
+#### Phase A: Generate LOW-RES drafts (1K) for approval
+```bash
+uv run ~/.claude/skills/nano-banana-pro/scripts/generate_image.py \
+  --input-image "./screenshots/raw/en-US/iphone_6_9/01_hero.png" \
+  --prompt "Your compositing prompt here" \
+  --filename "./screenshots/drafts/en-US/iphone_6_9/01_hero.png" \
+  --resolution 1K
+```
+
+**Hard requirements for Phase A:**
+- `--input-image` is MANDATORY — never omit it
+- `--resolution 1K` — drafts must be low-res to save time/cost
+- Output to `./screenshots/drafts/` (not `final/`)
+- Show drafts to user and get explicit approval before proceeding
+
+#### Phase B: Generate HIGH-RES finals (2K/4K) after approval
+Only after user approves the drafts:
+```bash
+uv run ~/.claude/skills/nano-banana-pro/scripts/generate_image.py \
+  --input-image "./screenshots/raw/en-US/iphone_6_9/01_hero.png" \
+  --prompt "Same compositing prompt" \
+  --filename "./screenshots/final/en-US/iphone_6_9/01_hero.png" \
+  --resolution 2K
+```
+
+**If you skip `--input-image`, you are generating fake mockups, not compositing real app UI. This violates Apple compliance.**
 
 Composition rules:
 - Preserve the raw screenshot faithfully; do not invent UI elements.
