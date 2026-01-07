@@ -5,41 +5,62 @@ description: Capture real App Store screenshots via Xcode Build MCP, then genera
 
 # App Store Screenshot Studio
 
-You produce App Store Connect-ready screenshot sets by:
-1) creating a tight screenshot "story" + copy,
-2) capturing real in-app screenshots via Xcode Build MCP,
-3) compositing App Store marketing frames via Nano Banana Pro,
-4) validating sizing + Apple compliance,
-5) packaging assets for submission.
+A step-by-step workflow for producing App Store Connect-ready screenshot sets.
 
-Use this skill when the user asks for App Store screenshots, screenshot automation, App Store Connect-ready images, or "marketing screenshots for submission".
+**Important:** This is a sequential workflow. Complete each step fully and get user confirmation before moving to the next. Do not skip ahead.
 
-## Dependencies (check before starting)
+---
 
-This skill requires two other tools. Before proceeding, verify they are available:
+## Step 1: Create the Screenshot Brief
 
-### 1. Nano Banana Pro (image generation)
-- **What it does:** Generates marketing composite images from raw screenshots using Google Gemini 3 Pro Image
-- **Check:** Look for the `nano-banana-pro` skill or `/nano-banana-pro` command
-- **Source:** https://github.com/steipete/agent-scripts/tree/main/skills/nano-banana-pro
-- **Install if missing:**
-  ```bash
-  git clone --depth 1 https://github.com/steipete/agent-scripts /tmp/agent-scripts && \
-    cp -r /tmp/agent-scripts/skills/nano-banana-pro ~/.claude/skills/ && \
-    rm -rf /tmp/agent-scripts
-  ```
-- **Requires:** `GEMINI_API_KEY` environment variable
+**Goal:** Define what screenshots to capture and what marketing copy to use.
 
-### 2. XcodeBuildMCP (simulator control)
-- **What it does:** Builds apps, boots simulators, captures screenshots via simctl
-- **Check:** Look for `XcodeBuildMCP` tools (e.g., `xcodebuild_build`, `simulator_boot`)
-- **Install if missing:**
-  ```bash
-  # One-liner for Claude Code
+### What to do
+
+Create a brief with 5-10 frames. For each frame, specify:
+
+| Field | Description |
+|-------|-------------|
+| frame_id | e.g., `01_hero`, `02_search` |
+| screen | Which app screen/state to capture |
+| headline | 2-5 words, benefit-led |
+| subheadline | Optional, max 10 words |
+| compliance_notes | IAP disclosure needed? Privacy wording? |
+
+**Rules of thumb:**
+- One idea per frame
+- Strongest value prop first
+- Keep text big and scannable
+- Use fictional/demo data only
+- Never misrepresent features the app doesn't have
+
+See [REFERENCE_APPLE.md](REFERENCE_APPLE.md) for compliance guardrails.
+
+### Checkpoint
+
+**STOP and ask the user:**
+> "Here's the screenshot brief. Does this capture the right screens and messaging? Any changes before I start capturing?"
+
+Do NOT proceed to Step 2 until the user approves the brief.
+
+---
+
+## Step 2: Capture Raw Screenshots
+
+**Goal:** Get real screenshots from the app running in a simulator.
+
+### Gate: Verify Xcode Build MCP
+
+Before proceeding, check if Xcode Build MCP tools are available (e.g., `xcodebuild_build`, `simulator_boot`, `simulator_screenshot`).
+
+**If NOT available:**
+```
+STOP. I need Xcode Build MCP to capture screenshots from the simulator.
+
+Install it with:
   claude mcp add XcodeBuildMCP npx xcodebuildmcp@latest
-  ```
-  Or add to MCP config (`~/.claude.json` or `.mcp.json`):
-  ```json
+
+Or add to your MCP config (~/.claude.json):
   {
     "mcpServers": {
       "XcodeBuildMCP": {
@@ -48,88 +69,77 @@ This skill requires two other tools. Before proceeding, verify they are availabl
       }
     }
   }
-  ```
-- **Source:** https://github.com/cameroncooke/XcodeBuildMCP
 
-### If dependencies are missing
-If either dependency is unavailable:
-1. **STOP** and inform the user which dependency is missing
-2. **Provide the install command** from above
-3. **Offer alternatives:**
-   - Without Xcode Build MCP: User can provide raw screenshots manually, then you composite them
-   - Without Nano Banana Pro: You can create the screenshot brief and capture raws, but user needs another tool for compositing
+Alternatively, you can provide raw screenshots manually and I'll skip to Step 3.
+```
 
-Do NOT attempt to proceed with the full workflow if dependencies are missing. Partial workflows are acceptable if clearly communicated.
+### What to do
 
-## Non-negotiables (Apple compliance)
-Follow these guardrails every time:
-- Never misrepresent the app. Don't add UI, features, badges, or claims the app does not actually provide.
-- Screenshots must show the app in use (not just splash/title art; avoid "login-only" sets).
-- If a screenshot promotes a feature/content that requires subscription/IAP, the screenshot copy must clearly disclose that.
-- Do not include prices or price-like claims in screenshot overlays (examples: "$4.99", "free today", "limited time offer").
-- Do not reference other mobile platforms/marketplaces (names, icons, imagery) in screenshots/overlays.
-- Use fictional/demo data (names, emails, messages, health/finance info, etc). No real personal data.
+1. Build the app
+2. Boot the correct simulator (see [STEP_2_CAPTURE.md](STEP_2_CAPTURE.md) for device selection)
+3. Navigate to each screen in the brief
+4. Capture screenshots
 
-If the user's requested copy/layout violates any of the above, STOP and propose compliant alternative copy/layout.
+**Output convention:**
+```
+./screenshots/raw/<locale>/<device_category>/<frame_id>.png
+```
 
-For exact references and common rejection vectors, see [REFERENCE_APPLE.md](REFERENCE_APPLE.md).
+Example: `./screenshots/raw/en-US/iphone_6_9/01_hero.png`
 
-## Technical requirements (must validate before "done")
-- Output: `.png`, `.jpg`, or `.jpeg`
-- Per device size: minimum 1, maximum 10 screenshots.
-- Dimensions must exactly match an accepted pixel size for the intended device category.
-- Prefer shipping only the highest-resolution required screenshot set per platform when the UI is the same (Apple scales down). Only generate extra sizes if the user explicitly wants per-size customization.
+See [STEP_2_CAPTURE.md](STEP_2_CAPTURE.md) for detailed capture guidance.
 
-See [REFERENCE_SIZES.md](REFERENCE_SIZES.md).
+### Checkpoint
 
-## Inputs (don't block; infer if missing)
-If the user doesn't supply these, make reasonable defaults and clearly state them:
-- App name + one-sentence value prop
-- Platforms: iOS, iPadOS (assume iOS; ask only if truly unknown)
-- Locales to produce (default: en-US)
-- Style direction (default: clean/minimal, matches app UI)
-- Screenshot count target (default: 7)
-- Any "do not show" content (default: avoid all personal data and any sensitive screens)
+**STOP and show the user the captured screenshots:**
+> "Here are the raw screenshots I captured. Do these look correct? Any screens need to be recaptured?"
 
-## Required workflow
+Do NOT proceed to Step 3 until the user confirms the raw screenshots are good.
 
-### Step 1 — Create the "Screenshot Brief" (storyboard)
-Output a concise brief with 5–10 frames, each with:
-- frame_id (e.g., 01_hero)
-- device_category (e.g., iphone_6_9, ipad_13)
-- in-app screen/state to capture (how to reach it)
-- headline (2–5 words, benefit-led)
-- subheadline (optional, <= 10 words)
-- visual emphasis (what to highlight)
-- compliance notes (IAP disclosure? privacy wording? avoid claims?)
+---
 
-Rules of thumb:
-- One idea per frame.
-- Put your strongest value prop first.
-- Keep text big, minimal, and scannable.
+## Step 3: Generate Draft Composites (1K)
 
-### Step 2 — Capture raw screenshots via Xcode Build MCP
-Use Xcode Build MCP to:
-- build the app
-- boot the correct simulators for the required device categories
-- run an automated screenshot flow (XCUITest / snapshot / simctl)
-- export to: `./screenshots/raw/<locale>/<device_category>/<frame_id>.png`
+**Goal:** Create low-resolution marketing composites for approval before investing in high-res.
 
-Hard requirements:
-- screenshots must be taken from the actual app UI (no Figma/placeholder comps as the base)
-- use deterministic data (seeded content, mocked network, demo account)
-- keep status bar consistent where possible
-- never capture real personal data
+### Gate: Verify Nano Banana Pro
 
-If you need play-by-play guidance, see [PLAYBOOK_XCODE_MCP.md](PLAYBOOK_XCODE_MCP.md).
+Check if the Nano Banana Pro script exists:
+```bash
+ls ~/.claude/skills/nano-banana-pro/scripts/generate_image.py
+```
 
-### Step 3 — Generate marketing composites via Nano Banana Pro
+**If NOT available:**
+```
+STOP. I need Nano Banana Pro to generate marketing composites.
 
-**⚠️ CRITICAL: You MUST pass the raw screenshot as `--input-image`. Do NOT generate from text prompts alone.**
+Install it with:
+  git clone --depth 1 https://github.com/steipete/agent-scripts /tmp/agent-scripts && \
+    cp -r /tmp/agent-scripts/skills/nano-banana-pro ~/.claude/skills/ && \
+    rm -rf /tmp/agent-scripts
+```
 
-This is a two-phase process:
+### Gate: Verify GEMINI_API_KEY
 
-#### Phase A: Generate LOW-RES drafts (1K) for approval
+Check if the API key is set:
+```bash
+echo $GEMINI_API_KEY | head -c 10
+```
+
+**If NOT available:**
+```
+STOP. Nano Banana Pro requires a Gemini API key.
+
+Set it with:
+  export GEMINI_API_KEY="your-key-here"
+
+Get a key at: https://aistudio.google.com/apikey
+```
+
+### What to do
+
+For each frame in the brief, generate a **1K draft**:
+
 ```bash
 uv run ~/.claude/skills/nano-banana-pro/scripts/generate_image.py \
   --input-image "./screenshots/raw/en-US/iphone_6_9/01_hero.png" \
@@ -138,55 +148,95 @@ uv run ~/.claude/skills/nano-banana-pro/scripts/generate_image.py \
   --resolution 1K
 ```
 
-**Hard requirements for Phase A:**
-- `--input-image` is MANDATORY — never omit it
-- `--resolution 1K` — drafts must be low-res to save time/cost
-- Output to `./screenshots/drafts/` (not `final/`)
-- Show drafts to user and get explicit approval before proceeding
+**CRITICAL:**
+- `--input-image` is MANDATORY. Never omit it.
+- Use `--resolution 1K` for drafts (faster, cheaper).
+- Output to `./screenshots/drafts/` (not `final/`).
 
-#### Phase B: Generate HIGH-RES finals (2K/4K) after approval
-Only after user approves the drafts:
+See [STEP_3_COMPOSITE.md](STEP_3_COMPOSITE.md) for prompt templates.
+
+### Checkpoint
+
+**STOP and show the user the draft composites:**
+> "Here are the 1K draft composites. Do these look good? Any changes to copy, layout, or style before I generate the high-res finals?"
+
+Do NOT proceed to Step 4 until the user approves the drafts.
+
+---
+
+## Step 4: Generate Final Composites (2K/4K)
+
+**Goal:** Re-generate approved drafts at full resolution.
+
+### What to do
+
+For each approved draft, regenerate at **2K** (or 4K for iPad):
+
 ```bash
 uv run ~/.claude/skills/nano-banana-pro/scripts/generate_image.py \
   --input-image "./screenshots/raw/en-US/iphone_6_9/01_hero.png" \
-  --prompt "Same compositing prompt" \
+  --prompt "Same prompt as draft" \
   --filename "./screenshots/final/en-US/iphone_6_9/01_hero.png" \
   --resolution 2K
 ```
 
-**If you skip `--input-image`, you are generating fake mockups, not compositing real app UI. This violates Apple compliance.**
+**Output convention:**
+```
+./screenshots/final/<locale>/<device_category>/<index>_<slug>.png
+```
 
-Composition rules:
-- Preserve the raw screenshot faithfully; do not invent UI elements.
-- Keep UI large and readable (don't shrink the app UI into a tiny phone).
-- Keep headline/subheadline inside safe margins (assume rounded corners and App Store cropping).
-- Maintain consistent layout across the set (grid, typography, background system).
+### Validate before proceeding
 
-Use [PROMPTS_NANO_BANANA.md](PROMPTS_NANO_BANANA.md) templates.
+Run these checks:
+- [ ] All images are accepted pixel sizes (see [REFERENCE_SIZES.md](REFERENCE_SIZES.md))
+- [ ] Format is .png or .jpg
+- [ ] 1-10 images per device category
+- [ ] No prices or competitor references in copy
+- [ ] IAP disclosures present where needed
 
-### Step 4 — Validate (and fix before shipping)
-You are not "done" until validation passes:
-- all images are in accepted pixel sizes for their device_category
-- formats are valid (.png/.jpg/.jpeg)
-- no transparency/alpha surprises (flatten if unsure)
-- per device_category: 1–10 images
-- copy passes compliance guardrails (no prices, no other platforms, no unverifiable claims)
-- IAP disclosures present when needed
-- every locale has a complete set
+### Checkpoint
 
-If scripts are available, run:
-`python scripts/validate_screenshots.py ./screenshots/final`
+**STOP and show the user the final composites:**
+> "Here are the final high-res composites. Ready to package for submission?"
 
-If anything fails: fix by regenerating or recapturing. Don't leave "almost right" assets.
+---
 
-### Step 5 — Package for submission
-Produce:
-- a ZIP of `./screenshots/final`
-- a `screenshots_manifest.json` listing locale → device_category → ordered files
+## Step 5: Package for Submission
 
-## How to finish your response to the user
-Always end with:
-1) What you generated (locales, device categories, counts)
-2) A file tree showing raw + final paths
-3) Any compliance notes (especially IAP disclosure decisions)
-4) Next recommended steps (upload order, optional A/B variants)
+**Goal:** Produce submission-ready assets.
+
+### What to do
+
+1. Create a ZIP of `./screenshots/final/`
+2. Generate a manifest file:
+
+```json
+{
+  "locales": {
+    "en-US": {
+      "iphone_6_9": [
+        "01_hero.png",
+        "02_search.png",
+        "03_detail.png"
+      ]
+    }
+  }
+}
+```
+
+### Final summary
+
+End your response with:
+1. What was generated (locales, device categories, counts)
+2. File tree showing raw + final paths
+3. Any compliance notes (IAP disclosures, etc.)
+4. Recommended next steps
+
+---
+
+## Quick Reference
+
+- [STEP_2_CAPTURE.md](STEP_2_CAPTURE.md) — Simulator setup, device selection, capture methods
+- [STEP_3_COMPOSITE.md](STEP_3_COMPOSITE.md) — Nano Banana Pro prompts and templates
+- [REFERENCE_APPLE.md](REFERENCE_APPLE.md) — Apple compliance checklist
+- [REFERENCE_SIZES.md](REFERENCE_SIZES.md) — Accepted screenshot dimensions
