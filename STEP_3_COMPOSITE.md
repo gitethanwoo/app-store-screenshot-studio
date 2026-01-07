@@ -47,7 +47,6 @@ Choose a cohesive style for the set. Pick ONE and use it consistently across all
 | `flat` | Straight-on, device fills frame |
 | `tilted` | Slight angle, adds depth |
 | `floating` | 3D perspective, device floating with shadow |
-| `multi-screen` | Multiple devices/screens showing related features |
 
 Add the chosen style to your prompt, e.g.: `Present the device in a floating 3D perspective with subtle shadow.`
 
@@ -84,19 +83,6 @@ Add:
 - 1-2 callout labels pointing to real parts of the UI
 
 If the screen is empty, populate with realistic fictional content.
-```
-
-### Template C: Multi-Screen
-
-```
-Create an App Store marketing screenshot showing multiple screens.
-
-Use the provided screenshot as the primary screen — DO NOT recreate the app UI.
-Add 1-2 additional screens showing related app states (can be variations).
-
-Headline: "{HEADLINE}"
-
-If screens are empty, populate with realistic fictional content.
 ```
 
 ---
